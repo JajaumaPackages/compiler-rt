@@ -11,7 +11,6 @@ Summary:	LLVM "compiler-rt" runtime libraries
 License:	NCSA or MIT
 URL:		http://llvm.org
 Source0:	http://llvm.org/releases/%{version}/%{name}-%{version}.src.tar.xz
-Patch0:	0001-Build-fixes-for-newer-glibc.patch
 
 BuildRequires:	cmake
 BuildRequires:	python
@@ -74,6 +73,7 @@ cd _build
 * Thu Sep 14 2017 Jajauma's Packages <jajauma@yandex.ru> - 5.0.0-1
 - Update to latest upstream release
 - Drop libFuzzer
+- Drop 0001-Build-fixes-for-newer-glibc.patch
 
 * Tue Sep 12 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-5
 - Package libFuzzer
