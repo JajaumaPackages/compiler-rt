@@ -4,8 +4,8 @@
 %endif
 
 Name:		compiler-rt
-Version:	4.0.1
-Release:	5%{?dist}
+Version:	5.0.0
+Release:	1%{?dist}
 Summary:	LLVM "compiler-rt" runtime libraries
 
 License:	NCSA or MIT
@@ -93,6 +93,9 @@ cd _build
 %{_libdir}/clang/%{version}
 
 %changelog
+* Thu Sep 14 2017 Jajauma's Packages <jajauma@yandex.ru> - 5.0.0-1
+- Update to latest upstream release
+
 * Tue Sep 12 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-5
 - Package libFuzzer
 
