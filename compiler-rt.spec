@@ -11,24 +11,12 @@ Summary:	LLVM "compiler-rt" runtime libraries
 License:	NCSA or MIT
 URL:		http://llvm.org
 Source0:	http://llvm.org/releases/%{version}/%{name}-%{version}.src.tar.xz
-# Extract libFuzzer sources from the llvm tarball.  We are packaging it as part
-# of compiler-rt, because upstream moved the code into the compiler-rt project
-# for LLVM 6.0.0, and we also don't want to add clang as a build dependency for
-# llvm.
-# wget http://llvm.org/releases/4.0.1/llvm-4.0.1.src.tar.xz
-# tar -xJf llvm-4.0.1.src.tar.xz
-# cd llvm-4.0.1.src/lib/Fuzzer/
-# tar -cJf Fuzzer.tar.xz Fuzzer/
-Source1: Fuzzer.tar.xz
 Patch0:	0001-Build-fixes-for-newer-glibc.patch
 
 BuildRequires:	cmake
 BuildRequires:	python
 BuildRequires:  llvm-devel = %{version}
 BuildRequires:  llvm-static = %{version}
-
-# libFuzzer must be built by clang.
-BuildRequires:  clang
 
 %description
 The compiler-rt project is a part of the LLVM project. It provides
@@ -37,8 +25,6 @@ code generation, sanitizer runtimes and profiling library for code
 instrumentation, and Blocks C language extension.
 
 %prep
-%setup -T -q -b 1 -n Fuzzer
-
 %autosetup -n %{name}-%{version}.src -p1
 
 %build
@@ -57,26 +43,18 @@ cd _build
 
 make %{?_smp_mflags}
 
-pushd ../../Fuzzer
-./build.sh
-popd
-
 %install
 cd _build
 make install DESTDIR=%{buildroot}
 
-mkdir -p %{buildroot}%{_libdir}/clang/%{version}/lib
-
-pushd ../../Fuzzer
-install -m0644 libFuzzer.a %{buildroot}%{_libdir}/clang/%{version}/lib
-popd
-
 # move sanitizer lists to better place
+mkdir -p %{buildroot}%{_libdir}/clang/%{version}
 for file in asan_blacklist.txt msan_blacklist.txt dfsan_blacklist.txt cfi_blacklist.txt dfsan_abilist.txt; do
 	mv -v %{buildroot}%{_prefix}/${file} %{buildroot}%{_libdir}/clang/%{version}/ || :
 done
 
 # move sanitizer libs to better place
+mkdir -p %{buildroot}%{_libdir}/clang/%{version}/lib
 mv -v %{buildroot}%{_prefix}/lib/linux/libclang_rt* %{buildroot}%{_libdir}/clang/%{version}/lib
 mkdir -p %{buildroot}%{_libdir}/clang/%{version}/lib/linux/
 pushd %{buildroot}%{_libdir}/clang/%{version}/lib
@@ -95,6 +73,7 @@ cd _build
 %changelog
 * Thu Sep 14 2017 Jajauma's Packages <jajauma@yandex.ru> - 5.0.0-1
 - Update to latest upstream release
+- Drop libFuzzer
 
 * Tue Sep 12 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-5
 - Package libFuzzer
