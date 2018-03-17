@@ -6,4 +6,11 @@
 /compiler-rt-3.9.1.src.tar.xz
 /compiler-rt-4.0.0.src.tar.xz
 /compiler-rt-4.0.1.src.tar.xz
-/libFuzzer.tar.xz
+/Fuzzer.tar.xz
+/Fuzzer-5.0.0.tar.xz
+/compiler-rt-5.0.0.src.tar.xz
+/Fuzzer-5.0.1.tar.xz
+/compiler-rt-5.0.1.src.tar.xz
+/compiler-rt-6.0.0rc1.src.tar.xz
+/compiler-rt-6.0.0rc2.src.tar.xz
+/compiler-rt-6.0.0.src.tar.xz

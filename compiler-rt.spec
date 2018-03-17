@@ -4,13 +4,13 @@
 %endif
 
 Name:		compiler-rt
-Version:	5.0.0
+Version:	6.0.0
 Release:	1%{?dist}
 Summary:	LLVM "compiler-rt" runtime libraries
 
 License:	NCSA or MIT
 URL:		http://llvm.org
-Source0:	http://llvm.org/releases/%{version}/%{name}-%{version}.src.tar.xz
+Source0:	http://llvm.org/releases/%{version}/%{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src.tar.xz
 
 BuildRequires:	cmake
 BuildRequires:	python
@@ -24,7 +24,7 @@ code generation, sanitizer runtimes and profiling library for code
 instrumentation, and Blocks C language extension.
 
 %prep
-%autosetup -n %{name}-%{version}.src -p1
+%autosetup -n %{name}-%{version}%{?rc_ver:rc%{rc_ver}}.src -p1
 
 %build
 mkdir -p _build
@@ -46,9 +46,13 @@ make %{?_smp_mflags}
 cd _build
 make install DESTDIR=%{buildroot}
 
-# move sanitizer lists to better place
-mkdir -p %{buildroot}%{_libdir}/clang/%{version}
-for file in asan_blacklist.txt msan_blacklist.txt dfsan_blacklist.txt cfi_blacklist.txt dfsan_abilist.txt; do
+mkdir -p %{buildroot}%{_libdir}/clang/%{version}/lib
+
+%ifarch aarch64
+%global aarch64_blacklists hwasan_blacklist.txt
+%endif
+
+for file in %{aarch64_blacklists} asan_blacklist.txt msan_blacklist.txt dfsan_blacklist.txt cfi_blacklist.txt dfsan_abilist.txt; do
 	mv -v %{buildroot}%{_prefix}/${file} %{buildroot}%{_libdir}/clang/%{version}/ || :
 done
 
@@ -70,10 +74,32 @@ cd _build
 %{_libdir}/clang/%{version}
 
 %changelog
-* Thu Sep 14 2017 Jajauma's Packages <jajauma@yandex.ru> - 5.0.0-1
-- Update to latest upstream release
-- Drop libFuzzer
-- Drop 0001-Build-fixes-for-newer-glibc.patch
+* Thu Mar 08 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-1
+- 6.0.0 Release
+
+* Tue Feb 13 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-0.4.rc2
+- 6.0.0-rc2 Release
+
+* Tue Feb 13 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-0.3.rc1
+- Fix build on AArch64
+
+* Wed Feb 07 2018 Fedora Release Engineering <releng@fedoraproject.org> - 6.0.0-0.2.rc1
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
+
+* Thu Jan 25 2018 Tom Stellard <tstellar@redhat.com> - 6.0.0-0.1.rc1
+- 6.0.0-rc1 Release
+
+* Wed Jan 17 2018 Tom Stellard <tstellar@redhat.com> - 5.0.1-2
+- Build libFuzzer with gcc
+
+* Wed Dec 20 2017 Tom Stellard <tstellar@redhat.com> - 5.0.1-1
+- 5.0.1 Release
+
+* Fri Oct 13 2017 Tom Stellard <tstellar@redhat.com> - 5.0.0-1
+- 5.0.0 Release
+
+* Mon Sep 25 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-6
+- Fix AArch64 build with glibc 2.26
 
 * Tue Sep 12 2017 Tom Stellard <tstellar@redhat.com> - 4.0.1-5
 - Package libFuzzer
